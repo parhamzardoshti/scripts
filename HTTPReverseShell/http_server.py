@@ -6,7 +6,7 @@ PORT_NUMBER = 8080
 
 class MyHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
-        command = input("SHELL@%s>> " % os.getcwd())
+        command = input("SHELL@UNIXBaseSystem>> ")
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
