@@ -5,12 +5,12 @@ import requests
 from datetime import datetime
 import netifaces
 # ip foundation
-netifaces.ifaddresses('wlp3s0')
-ipp = netifaces.ifaddresses('wlp3s0')[netifaces.AF_INET][0]['addr']
+#netifaces.ifaddresses('wlp3s0')
+#ipp = netifaces.ifaddresses('wlp3s0')[netifaces.AF_INET][0]['addr']
 
 
 
-#ip = requests.get('https://api.ipify.org').text
+ipp = requests.get('https://api.ipify.org').text
 target=ipp
 
 # Define our tergat manually if we want ....

