@@ -1,3 +1,4 @@
+/* simple program (sysinfo) which is simple example of using meterpreter shellcode in code */
 #include<stdio.h> 
 #include<stdlib.h> 
 #include<errno.h> 
