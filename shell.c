@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include <sys/types.h>
+#include <arpa/inet.h>
 #include <sys/socket.h>
 
 #define REMOTE_ADDR "127.0.0.1"
