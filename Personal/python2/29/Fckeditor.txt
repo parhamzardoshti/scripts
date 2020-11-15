@@ -1,0 +1,50 @@
+
+	BUG	:	Fckeditor
+	
+	=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+	
+								txt
+	
+	Dork	:	inurl:/Fckeditor/editor/filemanager/upload/
+	
+		1-	test.html
+		2-	ASP------>PHP
+		3- upload file txt
+		4- Send to the server
+		5- ezafe kardan url file txt upload shode be url site
+		
+		File uploaded with no errors
+		
+		
+								HTML
+								
+	Dork	:	intext:"portail Dokeos 1.8.5"
+	
+	Exploit	:	/dokeos/main/inc/lib/fckeditor/editor/filemanager/upload/test.html
+	
+								
+								shell
+								
+	Dork	:	inurl:/Fckeditor/editor/filemanager/upload/
+	
+	=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+	
+	CKfinder			
+	
+	Dork	:	inurl:/ckfinder/ckfinder.html
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+	

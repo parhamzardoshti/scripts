@@ -1,0 +1,42 @@
+senariyo	:
+
+	1-username & password change
+	moshkeli nadarim --- > SQl
+	
+	2- 1 & shell delete
+	moshkeli nadarim --- > SQl
+	
+	3- pach kardan bug
+		change kardan panel admin
+		
+		panel admnin	:	behr0uz4524mm
+		
+		*backdoor*
+		
+		otagh = site
+		dar	= shell
+		dar ahani = security
+		sorakh divar = backdoor
+		
+		3 ravesh :
+		
+		1:
+		asli	:	Information&Communication.php
+					Information&Comunication.php
+		
+		2:			/contact_us.php
+		
+		
+		
+		mr.mansoori@yahoo.com
+		
+		
+		http://www.sh3ll.org/
+		
+		
+		
+		
+		
+		
+		
+		

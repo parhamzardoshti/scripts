@@ -1,0 +1,9 @@
+
+
+
+		Dork	:	Created by interphoto 2.4.0
+		
+								or
+								
+					inurl:interphoto.php?id=	
+					
