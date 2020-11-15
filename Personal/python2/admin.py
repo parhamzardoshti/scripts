@@ -1,10 +1,6 @@
 #!/usr/bin/python
 # This was written for educational purpose only. Use it at your own risk.
 # Author will be not responsible for any damage!
-#
-#################################################################
-#                     Behrouz mansoori                          #
-################################################################# 
 
 import httplib
 import socket
@@ -14,8 +10,8 @@ import sys
 try:
     print "\t################################################################"
     print "\t#                          ADMIN FINDER                        #"
-    print "\t#                        Behrouz Mansoori                      #"
-    print "\t#                      mr.mansoori@yahoo.com                   #"
+    print "\t#                        Parham Zardoshti                      #"
+    print "\t#                                                              #"
     print "\t################################################################"
     var1=0
     var2=0
