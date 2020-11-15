@@ -1,1 +1,0 @@
-http://scriptserver.mainframe8.com/wordpress_password_hasher.php
