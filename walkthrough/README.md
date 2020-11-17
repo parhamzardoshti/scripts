@@ -1,4 +1,5 @@
-##Capture The Flag (CTF) From Vulnhub
+##Capture The Flag (CTF) From Vulnhub<br>
+##LEVEL EASY<br>
 <a href="https://www.vulnhub.com/entry/kb-vuln-2,562/">KB-VULN: 2</a><br>
 <a href="https://www.vulnhub.com/entry/kioptrix-level-11-2,23/"> Kioptrix: Level 1</a><br>
 <a href="https://www.vulnhub.com/entry/kioptrix-level-13-4,25/"> Kioptrix: Level 1.3</a><br>
